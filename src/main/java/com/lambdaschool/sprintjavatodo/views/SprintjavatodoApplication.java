@@ -1,4 +1,4 @@
-package com.lambdaschool.sprintjavatodo;
+package com.lambdaschool.sprintjavatodo.views;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,3 +1,4 @@
+// I am stuck on this one....
 package com.lambdaschool.sprintjavatodo.service;
 
 import com.lambdaschool.sprintjavatodo.model.ToDo;
@@ -82,5 +83,49 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
         return userrepos.save(newUser);
     }
+
+    @Override
+    public User findUSerByName(String name) {
+
+        User currentUser = userrepos.findByUserName(name);
+
+        if (currentUser != null) {
+            return  currentUser;
+        } else {
+            throw new EntityNotFoundException(name);
+        }
+    }
+
+    @Transactional
+    @Override
+    public User update(User user, long id) {
+
+        User currentUser = userrepos.findById().orElseThrow(() -> new EntityNotFoundException(Long.toString(id)));
+
+        if (user.getUsername() != null) {
+
+            currentUser.setUsername(user.getUsername());
+        }
+
+        if (user.getPassword() != null) {
+
+            currentUser.setPasswordNoEncrypt(user.getPassword());
+        }
+//
+//        // Add new user
+//        for (UserRoles ur : user.getTodos()) {
+//
+//            rolerepos.insertUserRoles((id, ur.getRole().getRoleid()));
+//        }
+        }
+
+//         if (user.getTodos().size() > 0)
+//    {
+//        for (ToDo t : user.getTodos())
+//        {
+//            currentUser.getTodos().add(new ToDo(t.getDescription(), new Date(), currentUser));
+//        }
+//    }
+//        return userrepos.save(currentUser);
 
 }
