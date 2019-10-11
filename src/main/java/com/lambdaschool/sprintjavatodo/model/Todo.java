@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "todos")
-public class ToDo extends Auditable {
+public class Todo extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,12 +30,12 @@ public class ToDo extends Auditable {
     private Date datestarted;
 
     // Constructor of complete
-    public ToDo() {
+    public Todo() {
         this.completed = false;
     }
 
     // Constructor
-    public ToDo(String description, User user, Date datestarted) {
+    public Todo(String description, User user, Date datestarted) {
         this.description = description;
         this.user = user;
         this.completed = false;
@@ -81,5 +82,10 @@ public class ToDo extends Auditable {
 
     public void setDatestarted(Date datestarted) {
         this.datestarted = datestarted;
+    }
+
+    @Override
+    public List<UserRoles> getUserroles() {
+        return null;
     }
 }

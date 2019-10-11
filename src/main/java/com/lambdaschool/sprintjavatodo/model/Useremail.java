@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.List;
 
 @Entity
 @Table(name = "useremails", uniqueConstraints = {@UniqueConstraint(columnNames = {"userid", "useremail"})})
@@ -70,4 +71,9 @@ import javax.validation.constraints.Email;
         {
             return "Useremail{" + "useremailid=" + useremailid + ", useremail='" + useremail + '\'' + ", user=" + user.getUsername() + '}';
         }
-}
+
+        @Override
+        public List<UserRoles> getUserroles() {
+            return null;
+        }
+    }

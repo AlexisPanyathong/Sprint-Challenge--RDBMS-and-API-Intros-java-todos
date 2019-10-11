@@ -1,7 +1,7 @@
 package com.lambdaschool.sprintjavatodo.service;
 
-import com.lambdaschool.oauth2.models.Useremail;
-import com.lambdaschool.oauth2.repository.UseremailRepository;
+//import com.lambdaschool.oauth2.models.Useremail;
+//import com.lambdaschool.oauth2.repository.UseremailRepository;
 import com.lambdaschool.sprintjavatodo.model.Useremail;
 import com.lambdaschool.sprintjavatodo.repository.UseremailRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -17,4 +17,8 @@ public interface RoleService {
     // Save Role
     Role save(Role role);
 
+    Role findByName(String name);
+
+    Role update(long id, Role role);
+
 }

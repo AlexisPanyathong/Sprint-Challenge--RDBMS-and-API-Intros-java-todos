@@ -1,7 +1,7 @@
 package com.lambdaschool.sprintjavatodo.controller;
 
-import com.lambdaschool.oauth2.models.Useremail;
-import com.lambdaschool.oauth2.services.UseremailService;
+//import com.lambdaschool.oauth2.models.Useremail;
+//import com.lambdaschool.oauth2.services.UseremailService;
 import com.lambdaschool.sprintjavatodo.model.Useremail;
 import com.lambdaschool.sprintjavatodo.service.UseremailService;
 import org.slf4j.Logger;

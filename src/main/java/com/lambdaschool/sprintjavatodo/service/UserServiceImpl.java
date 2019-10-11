@@ -1,24 +1,27 @@
 // I am stuck on this one....
 package com.lambdaschool.sprintjavatodo.service;
 
-import com.lambdaschool.sprintjavatodo.model.ToDo;
+import com.lambdaschool.sprintjavatodo.model.Role;
 import com.lambdaschool.sprintjavatodo.model.User;
 import com.lambdaschool.sprintjavatodo.model.UserRoles;
+import com.lambdaschool.sprintjavatodo.model.Useremail;
 import com.lambdaschool.sprintjavatodo.repository.RoleRepository;
-import com.lambdaschool.sprintjavatodo.repository.UserRespository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-@Service
+import com.lambdaschool.sprintjavatodo.repository.UserRespository;
+
+@Service(value = "userService")
 public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Autowired
@@ -29,103 +32,191 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Transactional
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        User user = userrepos.findByUserName(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("Invalid username or password, please try again.");
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
+    {
+        User user = userrepos.findByUsername(username.toLowerCase());
+        if (user == null)
+        {
+            throw new UsernameNotFoundException("Invalid username or password.");
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthority());
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),
+                user.getPassword(),
+                user.getAuthority());
     }
 
-    @Transactional
-    public User findUserById(long id) throws EntityNotFoundException {
-
-        return userrepos.findById(id).orElseThrow(() -> new EntityNotFoundException(Long.toString(id)));
+    public User findUserById(long id) throws EntityNotFoundException
+    {
+        return userrepos.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User id " + id + " not found!"));
     }
 
-    public List<User> findAll() {
+    @Override
+    public List<User> findByNameContaining(String username)
+    {
+        return userrepos.findByUsernameContainingIgnoreCase(username.toUpperCase());
+    }
 
+    @Override
+    public List<User> findAll()
+    {
         List<User> list = new ArrayList<>();
-        userrepos.findAll().iterator().forEachRemaining(list::add);
+        userrepos.findAll()
+                .iterator()
+                .forEachRemaining(list::add);
         return list;
     }
 
+    @Transactional
     @Override
-    public void delete(long id) {
+    public void delete(long id)
+    {
+        userrepos.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User id " + id + " not found!"));
+        userrepos.deleteById(id);
+    }
 
-        if (userrepos.findById(id).isPresent()) {
-            userrepos.deleteById(id);
-        } else {
-            throw new EntityNotFoundException(Long.toString(id));
+    @Override
+    public User findByName(String name)
+    {
+        User uu = userrepos.findByUsername(name.toLowerCase());
+        if (uu == null)
+        {
+            throw new EntityNotFoundException("User name " + name + " not found!");
         }
-
+        return uu;
     }
 
     @Transactional
     @Override
-    public User save(User user) {
+    public User save(User user)
+    {
+        if (userrepos.findByUsername(user.getUsername()) != null)
+        {
+            throw new EntityNotFoundException(user.getUsername() + " is already taken!");
+        }
 
         User newUser = new User();
         newUser.setUsername(user.getUsername());
         newUser.setPasswordNoEncrypt(user.getPassword());
+        newUser.setPrimaryemail(user.getPrimaryemail());
 
         ArrayList<UserRoles> newRoles = new ArrayList<>();
-
-        for (UserRoles ur : user.getUserRoles()) {
-            newRoles.add(new UserRoles(newUser, ur.getRole()));
+        for (UserRoles ur : user.getUserroles())
+        {
+            long id = ur.getRole()
+                    .getRoleid();
+            Role role = rolerepos.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Role id " + id + " not found!"));
+            newRoles.add(new UserRoles(newUser,
+                    ur.getRole()));
         }
-        newUser.setUserRoles(newRoles);
+        newUser.setUserroles(newRoles);
 
-        for (ToDo t : user.getTodos()) {
-            newUser.getTodos().add(new ToDo(t.getDescription(), new Date(), newUser));
+        for (Useremail ue : user.getUseremails())
+        {
+            newUser.getUseremails()
+                    .add(new Useremail(newUser,
+                            ue.getUseremail()));
         }
+
         return userrepos.save(newUser);
     }
 
+    @Transactional
     @Override
-    public User findUSerByName(String name) {
+    public User update(User user,
+                       long id,
+                       boolean isAdmin)
+    {
+        Authentication authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
 
-        User currentUser = userrepos.findByUserName(name);
+        User authenticatedUser = userrepos.findByUsername(authentication.getName());
 
-        if (currentUser != null) {
-            return  currentUser;
-        } else {
-            throw new EntityNotFoundException(name);
+        if (id == authenticatedUser.getUserid() || isAdmin)
+        {
+            User currentUser = findUserById(id);
+
+            if (user.getUsername() != null)
+            {
+                currentUser.setUsername(user.getUsername());
+            }
+
+            if (user.getPassword() != null)
+            {
+                currentUser.setPasswordNoEncrypt(user.getPassword());
+            }
+
+            if (user.getPrimaryemail() != null)
+            {
+                currentUser.setPrimaryemail(user.getPrimaryemail());
+            }
+
+            if (user.getUserroles()
+                    .size() > 0)
+            {
+                throw new EntityNotFoundException("User Roles are not updated through User. See endpoint POST: users/user/{userid}/role/{roleid}");
+            }
+
+            if (user.getUseremails()
+                    .size() > 0)
+            {
+                for (Useremail ue : user.getUseremails())
+                {
+                    currentUser.getUseremails()
+                            .add(new Useremail(currentUser,
+                                    ue.getUseremail()));
+                }
+            }
+
+            return userrepos.save(currentUser);
+        } else
+        {
+            throw new EntityNotFoundException(id + " Not current user");
         }
     }
 
     @Transactional
     @Override
-    public User update(User user, long id) {
+    public void deleteUserRole(long userid,
+                               long roleid)
+    {
+        userrepos.findById(userid)
+                .orElseThrow(() -> new EntityNotFoundException("User id " + userid + " not found!"));
+        rolerepos.findById(roleid)
+                .orElseThrow(() -> new EntityNotFoundException("Role id " + roleid + " not found!"));
 
-        User currentUser = userrepos.findById().orElseThrow(() -> new EntityNotFoundException(Long.toString(id)));
-
-        if (user.getUsername() != null) {
-
-            currentUser.setUsername(user.getUsername());
+        if (rolerepos.checkUserRolesCombo(userid,
+                roleid)
+                .getCount() > 0)
+        {
+            rolerepos.deleteUserRoles(userid,
+                    roleid);
+        } else
+        {
+            throw new EntityNotFoundException("Role and User Combination Does Not Exists");
         }
+    }
 
-        if (user.getPassword() != null) {
+    @Transactional
+    @Override
+    public void addUserRole(long userid,
+                            long roleid)
+    {
+        userrepos.findById(userid)
+                .orElseThrow(() -> new EntityNotFoundException("User id " + userid + " not found!"));
+        rolerepos.findById(roleid)
+                .orElseThrow(() -> new EntityNotFoundException("Role id " + roleid + " not found!"));
 
-            currentUser.setPasswordNoEncrypt(user.getPassword());
+        if (rolerepos.checkUserRolesCombo(userid,
+                roleid)
+                .getCount() <= 0)
+        {
+            rolerepos.insertUserRoles(userid,
+                    roleid);
+        } else
+        {
+            throw new EntityNotFoundException("Role and User Combination Already Exists");
         }
-//
-//        // Add new user
-//        for (UserRoles ur : user.getTodos()) {
-//
-//            rolerepos.insertUserRoles((id, ur.getRole().getRoleid()));
-//        }
-        }
-
-//         if (user.getTodos().size() > 0)
-//    {
-//        for (ToDo t : user.getTodos())
-//        {
-//            currentUser.getTodos().add(new ToDo(t.getDescription(), new Date(), currentUser));
-//        }
-//    }
-//        return userrepos.save(currentUser);
-
+    }
 }

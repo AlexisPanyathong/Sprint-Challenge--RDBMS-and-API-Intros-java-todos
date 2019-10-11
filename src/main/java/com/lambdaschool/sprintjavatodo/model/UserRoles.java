@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -75,4 +76,8 @@ public class UserRoles extends Auditable implements Serializable {
         return Objects.hash(getUser(), getRole());
     }
 
+    @Override
+    public List<UserRoles> getUserroles() {
+        return null;
+    }
 }

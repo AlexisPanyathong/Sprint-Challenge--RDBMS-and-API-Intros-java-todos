@@ -2,9 +2,9 @@ package com.lambdaschool.sprintjavatodo.controller;
 
 // This is where the ENDPOINTS are
 
-import com.lambdaschool.sprintjavatodo.model.ToDo;
+import com.lambdaschool.sprintjavatodo.model.Todo;
 import com.lambdaschool.sprintjavatodo.model.User;
-import com.lambdaschool.sprintjavatodo.service.ToDoService;
+import com.lambdaschool.sprintjavatodo.service.TodoService;
 import com.lambdaschool.sprintjavatodo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +26,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private ToDoService todoService;
+    private TodoService todoService;
 
     // GET Request http://localhost:2019/users/mine
     @GetMapping(value = "/mine",
@@ -62,9 +62,9 @@ public class UserController {
             consumes = {"application/json"},
             produces = {"application/json"})
     public ResponseEntity<?> addNewTodo(@PathVariable Long userid, @RequestBody
-            ToDo newTodo)
+            Todo newTodo)
     {
-        ToDo tempTodo = new ToDo(newTodo.getDescription(), userService.findUserById(userid), newTodo.getDatestarted());
+        Todo tempTodo = new Todo(newTodo.getDescription(), userService.findUserById(userid), newTodo.getDatestarted());
         todoService.save(tempTodo);
         return new ResponseEntity<>(tempTodo, HttpStatus.OK);
     }

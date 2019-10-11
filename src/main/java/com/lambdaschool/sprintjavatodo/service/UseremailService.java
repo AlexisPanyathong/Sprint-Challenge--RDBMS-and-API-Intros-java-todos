@@ -1,6 +1,5 @@
 package com.lambdaschool.sprintjavatodo.service;
 
-import com.lambdaschool.oauth2.models.Useremail;
 import com.lambdaschool.sprintjavatodo.model.Useremail;
 
 import java.util.List;

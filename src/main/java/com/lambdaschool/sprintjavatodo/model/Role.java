@@ -58,4 +58,9 @@ public class Role extends Auditable {
     public void setUserRoles(List<UserRoles> userRoles) {
         this.userRoles = userRoles;
     }
+
+    @Override
+    public List<UserRoles> getUserroles() {
+        return null;
+    }
 }

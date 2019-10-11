@@ -10,8 +10,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import java.util.Date;
+import java.util.List;
 
-import static javax.persistence.TemporalType.TIME;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
 @MappedSuperclass
@@ -32,4 +32,5 @@ abstract class Auditable {
     @Temporal(TIMESTAMP)
     protected Date lastModifiedDate;
 
+    public abstract List<UserRoles> getUserroles();
 }
