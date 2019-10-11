@@ -219,4 +219,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             throw new EntityNotFoundException("Role and User Combination Already Exists");
         }
     }
+
+    @Override
+    public User findUserByName(String name) {
+        return null;
+    }
 }
