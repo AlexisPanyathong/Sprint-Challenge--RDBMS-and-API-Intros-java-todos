@@ -1,4 +1,4 @@
-package com.lambdaschool.sprintjavatodo.views;
+package com.lambdaschool.sprintjavatodo;
 
 import com.lambdaschool.sprintjavatodo.model.Todo;
 import com.lambdaschool.sprintjavatodo.model.*;

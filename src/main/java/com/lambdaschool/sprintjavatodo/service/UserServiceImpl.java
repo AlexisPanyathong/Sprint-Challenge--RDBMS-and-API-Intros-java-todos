@@ -222,6 +222,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public User findUserByName(String name) {
-        return null;
+        return userrepos.findByUsername(name);
     }
 }

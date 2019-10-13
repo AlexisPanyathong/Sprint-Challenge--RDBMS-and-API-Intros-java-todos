@@ -93,11 +93,10 @@ public class RoleServiceImpl implements RoleService
     {
         Role newRole = new Role();
         newRole.setName(role.getName());
-        if (role.getUserroles()
-                .size() > 0)
-        {
-            throw new EntityNotFoundException("User Roles are not updated through Role. See endpoint POST: users/user/{userid}/role/{roleid}");
-        }
+//        if (role.getUserroles() == null)
+//        {
+//            throw new EntityNotFoundException("User Roles are not updated through Role. See endpoint POST: users/user/{userid}/role/{roleid}");
+//        }
 
         return rolerepos.save(role);
     }

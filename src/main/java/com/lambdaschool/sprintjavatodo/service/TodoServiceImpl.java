@@ -39,7 +39,24 @@ public class TodoServiceImpl implements TodoService
     }
 
     @Override
-    public void save(Todo tempTodo) {
+    public Todo save(Todo tempTodo) {
+        // description (X)
 
+        // user (X)
+
+        // datestarted (X)
+
+        Todo newTodo = new Todo();
+        newTodo.setDescription(tempTodo.getDescription());
+        newTodo.setUser(tempTodo.getUser());
+        newTodo.setDatestarted(tempTodo.getDatestarted());
+
+        // Return newTodo
+        return todorepos.save(newTodo);
     }
 }
+
+// Model - how the data is structured
+// Controller - is where the front-end first contact the back-end
+// Service - the actual back-end doing logic to make sure the data is correct
+// Repository - the connection between the back-end code and the information that is being saved

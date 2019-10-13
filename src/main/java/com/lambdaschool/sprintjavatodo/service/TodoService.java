@@ -8,5 +8,5 @@ public interface TodoService
     Todo updateTodo(Todo todo, long todoid);
     List<Todo> findAllTodos();
 
-    void save(Todo tempTodo);
+    Todo save(Todo tempTodo);
 }

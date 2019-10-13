@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/users")
@@ -61,18 +62,16 @@ public class UserController {
     @PostMapping(value = "/todo/{userid}",
             consumes = {"application/json"},
             produces = {"application/json"})
-    public ResponseEntity<?> addNewTodo(@PathVariable Long userid, @RequestBody
-            Todo newTodo)
+    public ResponseEntity<?> addNewTodo(@PathVariable Long userid, @RequestBody Todo newTodo)
     {
-        Todo tempTodo = new Todo(newTodo.getDescription(), userService.findUserById(userid), newTodo.getDatestarted());
-        todoService.save(tempTodo);
-        return new ResponseEntity<>(tempTodo, HttpStatus.OK);
+        Todo tempTodo = new Todo(newTodo.getDescription(), userService.findUserById(userid), new Date());
+        tempTodo = todoService.save(tempTodo);
+        return new ResponseEntity<>(tempTodo, HttpStatus.CREATED);
     }
 
     // DELETE Request http://localhost:2019/users/userid/{userid}
     @DeleteMapping("/userid/{userid}")
-    public ResponseEntity<?> deleteUserById(@PathVariable
-                                                    long userid)
+    public ResponseEntity<?> deleteUserById(@PathVariable long userid)
     {
         userService.delete(userid);
         return new ResponseEntity<>(HttpStatus.OK);
